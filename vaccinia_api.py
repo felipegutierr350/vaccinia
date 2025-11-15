@@ -518,12 +518,23 @@ Perfil paciente:
             Condiciones crónicas: {patient_profile.chronic_conditions or 'Ninguna'}
             """
         
+        # Determinar vacunas críticas según condición
+        critical_info = ""
+        if conditions and conditions[0] in self.condition_strategies:
+            strategy = self.condition_strategies[conditions[0]]
+            if 'critical_vaccines' in strategy:
+                critical_vaccines = ", ".join(strategy['critical_vaccines'])
+                critical_info = f"
+
+🚨 VACUNAS CRÍTICAS para {conditions[0]}: {critical_vaccines}
+DEBES mencionar estas vacunas si están indicadas para el caso específico."
+        
         # Crear chain y ejecutar
         prompt = self.build_prompt_template()
         chain = prompt | self.llm
         
         response = chain.invoke({
-            "context": context,
+            "context": context + critical_info,
             "patient_context": patient_context,
             "question": question
         })
