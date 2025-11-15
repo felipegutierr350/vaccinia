@@ -524,10 +524,7 @@ Perfil paciente:
             strategy = self.condition_strategies[conditions[0]]
             if 'critical_vaccines' in strategy:
                 critical_vaccines = ", ".join(strategy['critical_vaccines'])
-                critical_info = f"
-
-🚨 VACUNAS CRÍTICAS para {conditions[0]}: {critical_vaccines}
-DEBES mencionar estas vacunas si están indicadas para el caso específico."
+                critical_info = f"\n\n🚨 VACUNAS CRÍTICAS para {conditions[0]}: {critical_vaccines}\nDEBES mencionar estas vacunas si están indicadas para el caso específico."
         
         # Crear chain y ejecutar
         prompt = self.build_prompt_template()
