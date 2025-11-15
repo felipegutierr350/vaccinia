@@ -24,12 +24,13 @@ from langchain_core.documents import Document
 
 CONDITION_SEARCH_STRATEGIES = {
     "embarazo": {
-        "critical_vaccines": ["Tdap", "COVID-19", "Influenza"],
+        "critical_vaccines": ["Tdap", "COVID-19", "Influenza", "RSV"],
         "k_docs": 10,
         "forced_queries": [
             "Tdap tosferina embarazo semana 27 36",
             "COVID-19 embarazo cualquier trimestre",
-            "Influenza embarazo preferencia 20 semanas"
+            "Influenza embarazo preferencia 20 semanas",
+            "RSV VRS embarazo 32 semanas nirsevimab protección neonatal"
         ],
         "description": "Gestantes - cualquier trimestre"
     },
