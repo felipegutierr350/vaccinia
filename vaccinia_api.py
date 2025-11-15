@@ -520,8 +520,8 @@ Perfil paciente:
         
         # Determinar vacunas críticas según condición
         critical_info = ""
-        if conditions and conditions[0] in self.condition_strategies:
-            strategy = self.condition_strategies[conditions[0]]
+        if conditions and conditions[0] in CONDITION_SEARCH_STRATEGIES:
+            strategy = CONDITION_SEARCH_STRATEGIES[conditions[0]]
             if 'critical_vaccines' in strategy:
                 critical_vaccines = ", ".join(strategy['critical_vaccines'])
                 critical_info = f"\n\n🚨 VACUNAS CRÍTICAS para {conditions[0]}: {critical_vaccines}\nDEBES mencionar estas vacunas si están indicadas para el caso específico."
