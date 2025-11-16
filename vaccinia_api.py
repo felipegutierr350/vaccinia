@@ -1,5 +1,5 @@
 """
-VaccinIA v3.2 - API Backend con RAG
+VaccinIA v3.3 - Communication Module - API Backend con RAG
 NUEVO: Sistema de búsqueda especializada por condición médica
 - Embarazo, VIH, Cáncer, Trasplantes, Asplenia, Diabetes, EPOC, ERC, etc.
 """
@@ -565,7 +565,7 @@ Perfil paciente:
 # ============================================================================
 
 app = FastAPI(
-    title="VaccinIA v3.2 API",
+    title="VaccinIA v3.3 - Communication Module API",
     description="Sistema inteligente de recomendaciones de vacunación con búsqueda especializada por condición",
     version="3.2.0"
 )
@@ -583,10 +583,10 @@ rag_system = VaccinIARAG()
 @app.on_event("startup")
 async def startup_event():
     """Inicializa el sistema RAG al arrancar"""
-    print("🚀 Iniciando VaccinIA v3.2...")
+    print("🚀 Iniciando VaccinIA v3.3 - Communication Module...")
     rag_system.load_knowledge_base()
     rag_system.load_vectorstore()
-    print(f"✅ VaccinIA v3.2 listo con {len(rag_system.knowledge_base['chunks'])} chunks")
+    print(f"✅ VaccinIA v3.3 - Communication Module listo con {len(rag_system.knowledge_base['chunks'])} chunks")
 
 # ============================================================================
 # ENDPOINTS
@@ -595,7 +595,7 @@ async def startup_event():
 @app.get("/")
 async def root():
     return {
-        "service": "VaccinIA v3.2 API",
+        "service": "VaccinIA v3.3 - Communication Module API",
         "status": "active",
         "features": [
             "Búsqueda especializada por condición médica",
