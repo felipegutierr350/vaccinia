@@ -318,11 +318,33 @@ class VaccinIARAG:
             )
             print(f"✅ Vector store cargado")
         else:
-            print(f"⚠️ ChromaDB no existe - será creado en create_vectorstore()")
-            # Guardar hash para próxima vez
+            print(f"🔨 ChromaDB no existe - Creando desde cero...")
             os.makedirs(persist_dir, exist_ok=True)
+            
+            # Crear documentos desde knowledge base
+            if self.knowledge_base is None:
+                raise Exception("Knowledge base no cargada. Llama load_knowledge_base() primero.")
+            
+            documents = []
+            for chunk in self.knowledge_base['chunks']:
+                doc = Document(
+                    page_content=chunk['content'],
+                    metadata=chunk.get('metadata', {})
+                )
+                documents.append(doc)
+            
+            print(f"📚 Creando vector store con {len(documents)} documentos...")
+            self.vectorstore = Chroma.from_documents(
+                documents=documents,
+                embedding=self.embeddings,
+                persist_directory=persist_dir
+            )
+            
+            # Guardar hash
             with open(hash_file, 'w') as f:
                 f.write(current_hash)
+            
+            print(f"✅ Vector store creado y guardado en {persist_dir}")
     
     def _deduplicate(self, docs: List[Document]) -> List[Document]:
         """Elimina documentos duplicados basándose en contenido"""
