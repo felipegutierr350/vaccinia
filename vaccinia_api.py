@@ -289,13 +289,40 @@ class VaccinIARAG:
         print(f"✅ {len(self.knowledge_base['chunks'])} chunks cargados")
         
     def load_vectorstore(self, persist_dir: str = "./chroma_vaccinia"):
-        """Carga el vector store existente"""
-        print(f"📂 Cargando vector store desde {persist_dir}")
-        self.vectorstore = Chroma(
-            persist_directory=persist_dir,
-            embedding_function=self.embeddings
-        )
-        print(f"✅ Vector store cargado")
+        """Carga el vector store existente - con detección de cambios en JSON"""
+        import hashlib
+        import shutil
+        
+        # Calcular hash del JSON actual
+        kb_path = "./vaccines_knowledge_base.json"
+        hash_file = os.path.join(persist_dir, "kb_hash.txt")
+        
+        current_hash = hashlib.md5(open(kb_path, 'rb').read()).hexdigest()
+        
+        # Verificar si necesita rebuild
+        needs_rebuild = True
+        if os.path.exists(persist_dir) and os.path.exists(hash_file):
+            with open(hash_file, 'r') as f:
+                stored_hash = f.read().strip()
+            needs_rebuild = (current_hash != stored_hash)
+            
+            if needs_rebuild:
+                print(f"🔄 JSON cambió (hash: {current_hash[:8]}... vs {stored_hash[:8]}...) - Eliminando ChromaDB antiguo")
+                shutil.rmtree(persist_dir)
+        
+        if os.path.exists(persist_dir):
+            print(f"📂 Cargando vector store desde {persist_dir}")
+            self.vectorstore = Chroma(
+                persist_directory=persist_dir,
+                embedding_function=self.embeddings
+            )
+            print(f"✅ Vector store cargado")
+        else:
+            print(f"⚠️ ChromaDB no existe - será creado en create_vectorstore()")
+            # Guardar hash para próxima vez
+            os.makedirs(persist_dir, exist_ok=True)
+            with open(hash_file, 'w') as f:
+                f.write(current_hash)
     
     def _deduplicate(self, docs: List[Document]) -> List[Document]:
         """Elimina documentos duplicados basándose en contenido"""
