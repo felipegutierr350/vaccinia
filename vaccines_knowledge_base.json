@@ -11600,10 +11600,40 @@
         "indication_strength": "RECOMENDADA ≥50 años",
         "source": "ACIP_CDC_2024"
       }
+    },
+    {
+      "content": "# Influenza en Embarazo - Embarazada cualquier trimestre\n\n**Indicación**: FUERTE\n**Esquema**: 1 dosis anual\n**Semanas gestación**: Cualquier trimestre (preferible ≥20 semanas)\n**Intervalo**: Anual\n**Notas especiales**: Vacunación recomendada en CUALQUIER trimestre del embarazo. Riesgo aumentado de complicaciones graves por influenza en embarazadas. Protección madre y transferencia de anticuerpos al recién nacido hasta 6 meses. Usar vacuna inactivada, NO vacuna viva atenuada (LAIV).\n**Contraindicación**: Ninguna. Vacuna inactivada es segura en embarazo.\n**Prioridad**: ALTA - Embarazadas tienen riesgo 5 veces mayor de hospitalización por influenza\n\n[FUENTE: PAI Colombia, ACOG, CDC]",
+      "metadata": {
+        "vaccine": "Influenza",
+        "section": "Embarazo",
+        "population": "Embarazada cualquier trimestre",
+        "indication_strength": "FUERTE",
+        "source": "PAI_Colombia_ACOG_CDC"
+      }
+    },
+    {
+      "content": "# RSV (VRS) en Embarazo - Embarazada ≥32 semanas\n\n**Indicación**: FUERTE (IDSA 2025, FDA 2023)\n**Vacuna**: Abrysvo (Pfizer) - Vacuna bivalente RSVpreF\n**Esquema**: 1 dosis IM (0.5 ml)\n**Semanas gestación**: 32-36 semanas (óptimo: semana 32-34)\n**Intervalo**: Una vez por embarazo\n**Notas especiales**: \n- Protección pasiva del recién nacido mediante transferencia transplacentaria de anticuerpos\n- Eficacia 82% prevención RSV severo en bebés primeros 90 días de vida\n- Eficacia 69% prevención hospitalización por RSV hasta 6 meses\n- Alternativa: Nirsevimab (anticuerpo monoclonal) al recién nacido si madre NO vacunada\n- NO administrar ambos (vacuna materna + nirsevimab neonatal) - riesgo teórico interferencia\n**Contraindicación**: Antecedente reacción alérgica grave a vacuna RSV previa\n**Timing crítico**: Aplicar entre semanas 32-36 para máxima transferencia de anticuerpos antes del parto\n**Prioridad**: ALTA - RSV causa principal hospitalización en menores de 6 meses\n\n[FUENTE: IDSA 2025, FDA 2023, ACIP CDC]",
+      "metadata": {
+        "vaccine": "RSV",
+        "section": "Embarazo",
+        "population": "Embarazada ≥32 semanas",
+        "indication_strength": "FUERTE",
+        "source": "IDSA_2025_FDA_ACIP"
+      }
+    },
+    {
+      "content": "# RSV (Abrysvo) - Información General Embarazo\n\n**Nombre comercial**: Abrysvo (Pfizer)\n**Tipo**: Vacuna recombinante bivalente (RSVpreF)\n**Aprobación**: FDA Agosto 2023, indicación embarazo\n**Mecanismo**: Inmunización materna → Transferencia anticuerpos transplacentarios → Protección neonatal\n**Ventana vacunación**: Semanas 32-36 gestación\n**Duración protección neonatal**: ~6 meses post-nacimiento\n**Efectividad demostrada**: \n  - 82% reducción RSV severo con hospitalización (0-90 días vida)\n  - 69% reducción RSV con atención médica (0-6 meses)\n  - 57% reducción RSV con atención médica (0-12 meses en análisis post-hoc)\n**Seguridad**: \n  - Perfil seguridad aceptable en ensayos clínicos\n  - Eventos adversos similares a placebo\n  - No aumento significativo parto prematuro en análisis ajustado\n**Consideración vs Nirsevimab**: \n  - Vacuna materna (Abrysvo) O anticuerpo monoclonal neonatal (Nirsevimab)\n  - NO administrar ambos simultáneamente\n  - Si madre vacunada: NO dar nirsevimab\n  - Si madre NO vacunada: Dar nirsevimab al nacer\n\n[FUENTE: IDSA 2025, FDA Package Insert, ACIP]",
+      "metadata": {
+        "vaccine": "RSV",
+        "section": "Información General",
+        "population": "Embarazo",
+        "indication_strength": "FUERTE",
+        "source": "IDSA_2025_FDA"
+      }
     }
   ],
   "metadata": {
-    "total_chunks": 1162,
+    "total_chunks": 1165,
     "total_vaccines": 21,
     "processing_date": "2025-11-07T22:04:07.718306",
     "sources": [
@@ -11614,6 +11644,8 @@
     "idsa_2025_integrated": true,
     "idsa_integration_date": "2025-11-08T07:45:39.967651",
     "herpes_zoster_completed": true,
-    "herpes_zoster_completion_date": "2025-11-08T08:09:29.787224"
+    "herpes_zoster_completion_date": "2025-11-08T08:09:29.787224",
+    "pregnancy_vaccines_completed": true,
+    "pregnancy_completion_date": "2025-11-16T10:22:38.601961"
   }
 }
