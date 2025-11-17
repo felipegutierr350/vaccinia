@@ -1,7 +1,7 @@
 """
 VaccinIA v3.3 - Communication Module - API Backend con RAG
 NUEVO: Sistema de búsqueda especializada por condición médica
-- Embarazo, VIH, Cáncer, Trasplantes, Asplenia, Diabetes, EPOC, ERC, etc.
+- Embarazo, VIH, Cáncer, Trasplantes, Asplenia, Diabetes, EPOC, ERC, Adultos Mayores
 """
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,6 +10,7 @@ from typing import List, Dict, Optional, Any
 import json
 from datetime import datetime
 import os
+import re
 
 # RAG Stack
 from langchain_chroma import Chroma
@@ -33,6 +34,24 @@ CONDITION_SEARCH_STRATEGIES = {
             "RSV VRS embarazo 32 semanas nirsevimab protección neonatal"
         ],
         "description": "Gestantes - cualquier trimestre"
+    },
+    
+    "adulto_mayor": {
+        "critical_vaccines": [
+            "Neumococo PCV13", "Neumococo PPSV23",
+            "Herpes Zóster", "Tdap", 
+            "Influenza", "COVID-19"
+        ],
+        "k_docs": 15,
+        "forced_queries": [
+            "Neumococo PCV13 adulto mayor 65 años",
+            "Neumococo PPSV23 8 semanas después PCV13 adulto mayor",
+            "Herpes Zóster Shingrix 50 años adulto mayor 2 dosis",
+            "Tdap refuerzo cada 10 años adulto",
+            "Influenza anual adulto mayor 65 años",
+            "COVID-19 refuerzo anual adulto mayor"
+        ],
+        "description": "Adultos ≥65 años"
     },
     
     "vih": {
@@ -98,11 +117,11 @@ CONDITION_SEARCH_STRATEGIES = {
         "contraindicated": ["vacunas vivas"],
         "forced_queries": [
             "trasplante médula ósea stem cell HSCT",
-            "Neumococo trasplante hematopoyético",
-            "revacunación esquema completo trasplante médula"
+            "Neumococo PCV13 PPSV23 trasplante hematopoyético",
+            "vacunación después trasplante médula 6 meses",
+            "contraindicación vacunas vivas trasplante médula"
         ],
-        "timing_note": "Revacunación completa 6-12 meses post-trasplante",
-        "description": "Receptores de trasplante de células madre hematopoyéticas"
+        "description": "Receptores de trasplante de médula ósea/stem cell"
     },
     
     "asplenia": {
@@ -114,13 +133,12 @@ CONDITION_SEARCH_STRATEGIES = {
         "k_docs": 12,
         "force_by_metadata": ["Meningococo B (Bexsero)"],
         "forced_queries": [
-            "Neumococo asplenia hiposplenia esplenectomía",
-            "Meningococo ACYW asplenia capsulados",
-            "Meningococo B Bexsero asplenia",
-            "Haemophilus influenzae tipo b asplenia"
+            "Neumococo PCV13 PPSV23 asplenia esplenectomía",
+            "Meningococo ACYW asplenia 2 dosis",
+            "Meningococo B asplenia",
+            "Haemophilus influenzae asplenia",
+            "vacunación antes esplenectomía 2 semanas"
         ],
-        "urgency": "ALTA - Riesgo sepsis fulminante por encapsulados",
-        "timing_note": "Idealmente 2 semanas antes de esplenectomía electiva",
         "description": "Asplenia anatómica o funcional"
     },
     
@@ -131,10 +149,10 @@ CONDITION_SEARCH_STRATEGIES = {
         ],
         "k_docs": 12,
         "forced_queries": [
-            "Neumococo diabetes mellitus tipo 1 tipo 2",
-            "Influenza diabetes complicaciones",
-            "Hepatitis B diabetes",
-            "COVID-19 diabetes comorbilidad"
+            "Neumococo diabetes mellitus",
+            "Hepatitis B diabetes <60 años",
+            "Influenza diabetes anual",
+            "COVID-19 diabetes"
         ],
         "description": "Diabetes mellitus tipo 1 o 2"
     },
@@ -146,42 +164,41 @@ CONDITION_SEARCH_STRATEGIES = {
         ],
         "k_docs": 10,
         "forced_queries": [
-            "Neumococo EPOC enfermedad pulmonar obstructiva",
-            "Influenza EPOC exacerbación",
-            "COVID-19 EPOC comorbilidad respiratoria"
+            "Neumococo EPOC enfermedad pulmonar",
+            "Influenza EPOC anual",
+            "COVID-19 EPOC"
         ],
-        "description": "Enfermedad pulmonar obstructiva crónica"
+        "description": "Enfermedad Pulmonar Obstructiva Crónica"
     },
     
     "erc": {
         "critical_vaccines": [
-            "Hepatitis B", "Neumococo PCV13", "Neumococo PPSV23",
-            "Influenza", "COVID-19"
+            "Neumococo PCV13", "Neumococo PPSV23",
+            "Hepatitis B", "Influenza", "COVID-19"
         ],
         "k_docs": 12,
         "forced_queries": [
-            "Hepatitis B enfermedad renal crónica hemodiálisis",
-            "Neumococo insuficiencia renal",
-            "vacunación diálisis ERC",
-            "Hepatitis B dosis doble esquema renal"
+            "Neumococo enfermedad renal crónica",
+            "Hepatitis B hemodiálisis diálisis",
+            "Influenza enfermedad renal",
+            "COVID-19 insuficiencia renal"
         ],
-        "timing_note": "Hepatitis B puede requerir esquema de dosis dobles",
-        "description": "Enfermedad renal crónica / Hemodiálisis"
+        "description": "Enfermedad Renal Crónica"
     },
     
     "hepatopatia": {
         "critical_vaccines": [
-            "Hepatitis A", "Hepatitis B",
             "Neumococo PCV13", "Neumococo PPSV23",
+            "Hepatitis A", "Hepatitis B",
             "Influenza", "COVID-19"
         ],
         "k_docs": 12,
         "forced_queries": [
-            "Hepatitis A cirrosis hepatopatía crónica",
-            "Hepatitis B enfermedad hepática",
-            "Neumococo cirrosis"
+            "Neumococo cirrosis hepatopatía",
+            "Hepatitis A B enfermedad hepática",
+            "vacunación enfermedad hígado crónica"
         ],
-        "description": "Enfermedad hepática crónica / Cirrosis"
+        "description": "Enfermedad hepática crónica"
     },
     
     "inmunosupresion": {
@@ -192,13 +209,12 @@ CONDITION_SEARCH_STRATEGIES = {
         "k_docs": 12,
         "contraindicated": ["vacunas vivas"],
         "forced_queries": [
-            "inmunosupresión corticoides altas dosis",
-            "biológicos anti-TNF rituximab vacunación",
-            "contraindicación vacunas vivas inmunosupresores",
-            "metotrexate azatioprina vacunación"
+            "Neumococo inmunosupresión biológicos",
+            "vacunación inmunosupresor anti-TNF rituximab",
+            "contraindicación vacunas vivas inmunosupresión",
+            "timing vacunación biológicos antes después"
         ],
-        "timing_note": "Vacunas vivas contraindicadas. Preferir vacunación antes de inicio de inmunosupresores",
-        "description": "Inmunosupresión por medicamentos (no cáncer/VIH/trasplante)"
+        "description": "Terapia inmunosupresora (biológicos, esteroides)"
     },
     
     "enfermedad_autoinmune": {
@@ -206,12 +222,11 @@ CONDITION_SEARCH_STRATEGIES = {
             "Neumococo PCV13", "Neumococo PPSV23",
             "Influenza", "COVID-19"
         ],
-        "k_docs": 12,
-        "contraindicated": ["vacunas vivas si en tratamiento"],
+        "k_docs": 10,
         "forced_queries": [
-            "enfermedad autoinmune lupus artritis reumatoide",
-            "biológicos anti-TNF vacunación",
-            "Neumococo enfermedad autoinmune"
+            "Neumococo lupus artritis reumatoide autoinmune",
+            "vacunación enfermedad reumatológica",
+            "Influenza lupus artritis"
         ],
         "description": "Enfermedades autoinmunes (LES, AR, etc.)"
     }
@@ -220,6 +235,7 @@ CONDITION_SEARCH_STRATEGIES = {
 # Mapeo de keywords a condiciones
 CONDITION_KEYWORDS = {
     "embarazo": ['embaraz', 'gestante', 'gestación', 'prenatal'],
+    "adulto_mayor": ['adulto mayor', 'adulta mayor', 'tercera edad', 'anciano', 'geriatría', 'geriátrico'],
     "vih": ['vih', 'sida', 'cd4', 'hiv'],
     "cancer": ['cáncer', 'cancer', 'quimioterapia', 'radioterapia', 'oncológico', 
                'oncologia', 'tumor', 'neoplasia', 'leucemia', 'linfoma'],
@@ -271,98 +287,86 @@ class ChatResponse(BaseModel):
     timestamp: str
 
 # ============================================================================
-# SISTEMA RAG
+# INICIALIZACIÓN FASTAPI
 # ============================================================================
 
-class VaccinIARAG:
+app = FastAPI(
+    title="VaccinIA v3.3 Communication Module API",
+    description="Sistema inteligente de recomendaciones de vacunación con búsqueda especializada",
+    version="3.3.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ============================================================================
+# RAG SYSTEM
+# ============================================================================
+
+class VaccineRAGSystem:
     def __init__(self):
-        self.embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
-        self.llm = ChatOpenAI(model="gpt-4-turbo-preview", temperature=0)
-        self.vectorstore = None
-        self.knowledge_base = None
+        self.openai_api_key = os.getenv("OPENAI_API_KEY")
+        if not self.openai_api_key:
+            raise ValueError("OPENAI_API_KEY no configurada")
         
-    def load_knowledge_base(self, json_path: str = "./vaccines_knowledge_base.json"):
-        """Carga la base de conocimiento desde JSON"""
-        print(f"📚 Cargando base de conocimiento desde {json_path}")
-        with open(json_path, 'r', encoding='utf-8') as f:
-            self.knowledge_base = json.load(f)
-        print(f"✅ {len(self.knowledge_base['chunks'])} chunks cargados")
+        self.embeddings = OpenAIEmbeddings(
+            model="text-embedding-3-small",
+            openai_api_key=self.openai_api_key
+        )
         
-    def load_vectorstore(self, persist_dir: str = "./chroma_vaccinia"):
-        """Carga el vector store existente - con detección de cambios en JSON"""
-        import hashlib
-        import shutil
+        self.vectorstore = Chroma(
+            persist_directory="./chroma_vaccinia",
+            embedding_function=self.embeddings
+        )
         
-        # Calcular hash del JSON actual
-        kb_path = "./vaccines_knowledge_base.json"
-        hash_file = os.path.join(persist_dir, "kb_hash.txt")
-        
-        current_hash = hashlib.md5(open(kb_path, 'rb').read()).hexdigest()
-        
-        # Verificar si necesita rebuild
-        needs_rebuild = True
-        if os.path.exists(persist_dir) and os.path.exists(hash_file):
-            with open(hash_file, 'r') as f:
-                stored_hash = f.read().strip()
-            needs_rebuild = (current_hash != stored_hash)
-            
-            if needs_rebuild:
-                print(f"🔄 JSON cambió (hash: {current_hash[:8]}... vs {stored_hash[:8]}...) - Eliminando ChromaDB antiguo")
-                shutil.rmtree(persist_dir)
-        
-        if os.path.exists(persist_dir):
-            print(f"📂 Cargando vector store desde {persist_dir}")
-            self.vectorstore = Chroma(
-                persist_directory=persist_dir,
-                embedding_function=self.embeddings
-            )
-            print(f"✅ Vector store cargado")
-        else:
-            print(f"🔨 ChromaDB no existe - Creando desde cero...")
-            os.makedirs(persist_dir, exist_ok=True)
-            
-            # Crear documentos desde knowledge base
-            if self.knowledge_base is None:
-                raise Exception("Knowledge base no cargada. Llama load_knowledge_base() primero.")
-            
-            documents = []
-            for chunk in self.knowledge_base['chunks']:
-                doc = Document(
-                    page_content=chunk['content'],
-                    metadata=chunk.get('metadata', {})
-                )
-                documents.append(doc)
-            
-            print(f"📚 Creando vector store con {len(documents)} documentos...")
-            self.vectorstore = Chroma.from_documents(
-                documents=documents,
-                embedding=self.embeddings,
-                persist_directory=persist_dir
-            )
-            
-            # Guardar hash
-            with open(hash_file, 'w') as f:
-                f.write(current_hash)
-            
-            print(f"✅ Vector store creado y guardado en {persist_dir}")
+        self.llm = ChatOpenAI(
+            model="gpt-4-turbo-preview",
+            temperature=0,
+            openai_api_key=self.openai_api_key
+        )
     
-    def _deduplicate(self, docs: List[Document]) -> List[Document]:
-        """Elimina documentos duplicados basándose en contenido"""
-        seen = set()
-        unique_docs = []
-        for doc in docs:
-            content_hash = hash(doc.page_content[:200])
-            if content_hash not in seen:
-                seen.add(content_hash)
-                unique_docs.append(doc)
-        return unique_docs
+    def detect_age_from_text(self, text: str) -> Optional[int]:
+        """
+        Detecta edad numérica en el texto (ej: '76 años', '68 años')
+        """
+        # Patrón para detectar números seguidos de 'años' o 'año'
+        age_pattern = r'\b(\d{1,3})\s*(?:años?|a[ñn]os?)\b'
+        matches = re.findall(age_pattern, text.lower())
+        
+        if matches:
+            try:
+                age = int(matches[0])
+                # Validar que sea una edad razonable
+                if 18 <= age <= 120:
+                    return age
+            except ValueError:
+                pass
+        
+        return None
     
     def detect_conditions(self, question: str, patient_profile: Optional[PatientProfile] = None) -> List[str]:
         """
         Detecta condiciones médicas en la pregunta o perfil del paciente
+        INCLUYE detección automática de edad para adultos mayores
         """
         question_lower = question.lower()
         conditions = []
+        
+        # NUEVO: Detectar edad numérica para adulto mayor
+        detected_age = self.detect_age_from_text(question)
+        if detected_age and detected_age >= 65:
+            if 'adulto_mayor' not in conditions:
+                conditions.append('adulto_mayor')
+        
+        # Si hay patient_profile con edad
+        if patient_profile and patient_profile.age >= 65:
+            if 'adulto_mayor' not in conditions:
+                conditions.append('adulto_mayor')
         
         # Iterar sobre todas las condiciones y sus keywords
         for condition, keywords in CONDITION_KEYWORDS.items():
@@ -393,249 +397,156 @@ class VaccinIARAG:
                                 conditions.append(condition)
                                 break
         
-        # Eliminar duplicados manteniendo orden
-        seen = set()
-        unique_conditions = []
-        for c in conditions:
-            if c not in seen:
-                seen.add(c)
-                unique_conditions.append(c)
-        
-        return unique_conditions
+        return list(set(conditions))  # Eliminar duplicados
     
-    def retrieve_condition_docs(self, question: str, condition: str) -> List[Document]:
+    def retrieve_condition_docs(self, condition: str, question: str) -> List[Document]:
         """
-        Búsqueda especializada por condición médica específica
+        Recupera documentos específicos para una condición médica usando estrategia especializada
         """
-        if condition not in CONDITION_SEARCH_STRATEGIES:
-            print(f"⚠️ Condición '{condition}' no tiene estrategia definida, usando búsqueda estándar")
-            return self.vectorstore.similarity_search(question, k=8)
+        strategy = CONDITION_SEARCH_STRATEGIES.get(condition)
+        if not strategy:
+            return []
         
-        strategy = CONDITION_SEARCH_STRATEGIES[condition]
-        k = strategy.get('k_docs', 10)
+        docs = []
         
-        print(f"🔍 Usando estrategia '{condition}': {strategy.get('description', '')}")
+        # 1. Búsquedas forzadas específicas
+        for forced_query in strategy.get("forced_queries", []):
+            results = self.vectorstore.similarity_search(forced_query, k=2)
+            docs.extend(results)
         
-        # 1. Búsqueda principal semántica
-        docs_main = self.vectorstore.similarity_search(question, k=k//2)
-        all_docs = list(docs_main)
+        # 2. Si hay force_by_metadata, recuperar por metadata
+        for vaccine_name in strategy.get("force_by_metadata", []):
+            try:
+                forced_docs = self.vectorstore.get(
+                    where={"vaccine": vaccine_name},
+                    limit=2
+                )
+                if forced_docs and 'documents' in forced_docs:
+                    for i, doc_content in enumerate(forced_docs['documents']):
+                        metadata = forced_docs['metadatas'][i] if 'metadatas' in forced_docs else {}
+                        docs.append(Document(page_content=doc_content, metadata=metadata))
+            except:
+                pass
         
-        # 2. Búsquedas forzadas por queries específicas
-        if 'forced_queries' in strategy:
-            print(f"   🎯 Ejecutando {len(strategy['forced_queries'])} búsquedas forzadas")
-            for forced_query in strategy['forced_queries']:
-                try:
-                    docs = self.vectorstore.similarity_search(forced_query, k=2)
-                    all_docs.extend(docs)
-                except Exception as e:
-                    print(f"   ⚠️ Error en búsqueda forzada '{forced_query}': {e}")
+        # 3. Búsqueda semántica general
+        general_results = self.vectorstore.similarity_search(
+            f"{condition} {question}",
+            k=strategy.get("k_docs", 10)
+        )
+        docs.extend(general_results)
         
-        # 3. Forzado por metadata exacta
-        if 'force_by_metadata' in strategy:
-            print(f"   🎯 Forzando {len(strategy['force_by_metadata'])} vacunas por metadata")
-            for vaccine_name in strategy['force_by_metadata']:
-                try:
-                    result = self.vectorstore.get(where={"vaccine": vaccine_name})
-                    if result and 'documents' in result:
-                        for i, doc_content in enumerate(result['documents']):
-                            doc = Document(
-                                page_content=doc_content,
-                                metadata=result['metadatas'][i]
-                            )
-                            all_docs.append(doc)
-                            print(f"      ✅ Forzado: {vaccine_name}")
-                except Exception as e:
-                    print(f"   ⚠️ Error forzando {vaccine_name}: {e}")
+        # Eliminar duplicados por contenido
+        seen_contents = set()
+        unique_docs = []
+        for doc in docs:
+            if doc.page_content not in seen_contents:
+                seen_contents.add(doc.page_content)
+                unique_docs.append(doc)
         
-        # 4. Buscar contraindicaciones si aplica
-        if 'contraindicated' in strategy:
-            print(f"   ⚠️ Buscando contraindicaciones para {len(strategy['contraindicated'])} vacunas")
-            for contraind in strategy['contraindicated'][:3]:
-                try:
-                    docs = self.vectorstore.similarity_search(
-                        f"contraindicación {contraind} {condition}",
-                        k=1
-                    )
-                    all_docs.extend(docs)
-                except Exception as e:
-                    print(f"   ⚠️ Error buscando contraindicación '{contraind}': {e}")
-        
-        # 5. Deduplicar
-        unique_docs = self._deduplicate(all_docs)
-        
-        print(f"   📊 {len(unique_docs)} documentos únicos recuperados (de {len(all_docs)} totales)")
-        
-        return unique_docs[:k]
+        return unique_docs[:strategy.get("k_docs", 15)]
     
-    def retrieve_pregnancy_docs(self, question: str) -> List[Document]:
-        """Búsqueda especializada para embarazo (LEGACY - ahora usa retrieve_condition_docs)"""
-        return self.retrieve_condition_docs(question, "embarazo")
-    
-    def retrieve_hiv_docs(self, question: str) -> List[Document]:
-        """Búsqueda especializada para VIH (LEGACY - ahora usa retrieve_condition_docs)"""
-        return self.retrieve_condition_docs(question, "vih")
-    
-    def build_prompt_template(self) -> ChatPromptTemplate:
-        """Construye el template del prompt con instrucciones anti-alucinación"""
-        
-        system_template = """Eres VaccinIA, asistente médico especializado en vacunación para adultos en Colombia.
-
-INSTRUCCIONES CRÍTICAS:
-1. Responde ÚNICAMENTE basándote en las guías oficiales del PAI Colombia proporcionadas en el contexto
-2. Si la información NO está en el contexto: "No tengo información suficiente en las guías del PAI Colombia para responder esto con precisión"
-3. NUNCA inventes dosis, esquemas, contraindicaciones o intervalos
-4. SIEMPRE cita la fuente: [FUENTE: Vacuna - Sección]
-5. Recomienda consultar médico tratante si hay dudas o casos complejos
-6. Sé preciso con números: dosis, intervalos, edades, recuentos CD4
-7. Distingue claramente "FUERTE" vs "CONDICIONAL"
-8. Si hay contraindicaciones, explícalas claramente con condiciones específicas
-
-CORRECCIONES CONOCIDAS:
-- VPH en VIH: 3 dosis (0, 1-2, 6 meses), NO más dosis
-- Meningococo B: Bexsero, 2 dosis (0.5 ml IM), intervalo 1-2 meses, FUERTE en VIH
-
-CONDICIONES ESPECIALES:
-- Cáncer en quimioterapia: Vacunas vivas CONTRAINDICADAS, neumococo e influenza CRÍTICAS
-- Asplenia: Riesgo ALTO sepsis por encapsulados (neumococo, meningococo, Hib)
-- Trasplantes: Vacunas vivas CONTRAINDICADAS, revacunación completa en algunos casos
-- Diabetes/EPOC/ERC: Neumococo e influenza especialmente importantes
-
-Contexto PAI Colombia:
-{context}
-
-Perfil paciente:
-{patient_context}
-"""
-        
-        human_template = """Pregunta: {question}"""
-        
-        return ChatPromptTemplate.from_messages([
-            ("system", system_template),
-            ("human", human_template)
-        ])
-    
-    def answer_question(
-        self, 
-        question: str, 
-        patient_profile: Optional[PatientProfile] = None,
-        k_docs: int = 8
-    ) -> Dict[str, Any]:
+    def answer_question(self, question: str, patient_profile: Optional[PatientProfile] = None) -> ChatResponse:
         """
-        Responde pregunta con detección automática de condiciones y búsqueda especializada
+        Responde pregunta usando RAG con búsqueda especializada por condición
         """
+        # Detectar condiciones
+        detected_conditions = self.detect_conditions(question, patient_profile)
         
-        # DETECTAR CONDICIONES
-        conditions = self.detect_conditions(question, patient_profile)
-        
-        print(f"\n{'='*60}")
-        print(f"❓ Pregunta: {question[:100]}...")
-        print(f"🔍 Condiciones detectadas: {conditions if conditions else 'Ninguna (búsqueda estándar)'}")
-        print(f"{'='*60}\n")
-        
-        # SELECCIONAR ESTRATEGIA DE BÚSQUEDA
-        if not conditions:
-            # Búsqueda estándar
-            docs = self.vectorstore.similarity_search(question, k=k_docs)
-            search_type = "standard"
-            print(f"📊 Búsqueda estándar: {len(docs)} documentos")
-        
-        elif 'embarazo' in conditions:
-            docs = self.retrieve_condition_docs(question, 'embarazo')
-            search_type = "embarazo"
-        
-        elif 'vih' in conditions:
-            docs = self.retrieve_condition_docs(question, 'vih')
-            search_type = "vih"
-        
+        # Recuperar documentos
+        if detected_conditions:
+            all_docs = []
+            for condition in detected_conditions:
+                condition_docs = self.retrieve_condition_docs(condition, question)
+                all_docs.extend(condition_docs)
+            
+            # Eliminar duplicados finales
+            seen = set()
+            relevant_docs = []
+            for doc in all_docs:
+                if doc.page_content not in seen:
+                    seen.add(doc.page_content)
+                    relevant_docs.append(doc)
         else:
-            # Usar estrategia de la primera condición detectada
-            primary_condition = conditions[0]
-            docs = self.retrieve_condition_docs(question, primary_condition)
-            search_type = f"condition:{primary_condition}"
+            # Búsqueda general si no se detectan condiciones
+            relevant_docs = self.vectorstore.similarity_search(question, k=10)
         
         # Construir contexto
-        context = "\n\n---\n\n".join([doc.page_content for doc in docs])
+        context = "\n\n---\n\n".join([doc.page_content for doc in relevant_docs[:15]])
         
-        # Construir contexto del paciente
-        patient_context = "No especificado"
-        if patient_profile:
-            patient_context = f"""
-            Edad: {patient_profile.age}
-            Sexo: {patient_profile.sex}
-            Embarazo: {'Sí' if patient_profile.pregnant else 'No'}
-            Inmunocomprometido: {'Sí' if patient_profile.immunocompromised else 'No'}
-            Condiciones crónicas: {patient_profile.chronic_conditions or 'Ninguna'}
-            """
+        # Construir prompt
+        condition_info = ""
+        if detected_conditions:
+            strategies_info = []
+            for cond in detected_conditions:
+                strat = CONDITION_SEARCH_STRATEGIES.get(cond, {})
+                desc = strat.get("description", cond)
+                critical = ", ".join(strat.get("critical_vaccines", []))
+                strategies_info.append(f"- {desc}: vacunas críticas: {critical}")
+            condition_info = f"\n\nCONDICIONES DETECTADAS:\n" + "\n".join(strategies_info)
         
-        # Determinar vacunas críticas según condición
-        critical_info = ""
-        if conditions and conditions[0] in CONDITION_SEARCH_STRATEGIES:
-            strategy = CONDITION_SEARCH_STRATEGIES[conditions[0]]
-            if 'critical_vaccines' in strategy:
-                critical_vaccines = ", ".join(strategy['critical_vaccines'])
-                critical_info = f"\n\n🚨 VACUNAS CRÍTICAS para {conditions[0]}: {critical_vaccines}\nDEBES mencionar estas vacunas si están indicadas para el caso específico."
+        prompt_template = ChatPromptTemplate.from_template("""
+Eres un asistente especializado en vacunación para adultos en Colombia basado en guías oficiales (PAI Colombia, IDSA, ACIP/CDC).
+
+{condition_info}
+
+CONTEXTO DE GUÍAS OFICIALES:
+{context}
+
+PREGUNTA: {question}
+
+INSTRUCCIONES CRÍTICAS:
+1. Usa SOLO información del contexto proporcionado
+2. CITA la fuente al final de cada recomendación: [FUENTE: nombre de vacuna - sección]
+3. Si NO está en el contexto, di explícitamente "No tengo información suficiente sobre..."
+4. NUNCA inventes dosis, esquemas, contraindicaciones o intervalos
+5. Si detectaste condiciones específicas, PRIORIZA las vacunas críticas para esas condiciones
+6. Para adultos ≥65 años, SIEMPRE menciona Neumococo PCV13+PPSV23 y Herpes Zóster si están en el contexto
+
+Responde de manera clara, estructurada y profesional.
+""")
         
-        # Crear chain y ejecutar
-        prompt = self.build_prompt_template()
-        chain = prompt | self.llm
+        chain = prompt_template | self.llm
         
-        response = chain.invoke({
-            "context": context + critical_info,
-            "patient_context": patient_context,
-            "question": question
-        })
-        
-        # Determinar nivel de confianza
-        confidence = "high" if len(docs) >= 5 else "medium" if len(docs) >= 3 else "low"
-        
-        # Preparar fuentes
-        sources = []
-        for doc in docs[:10]:  # Top 10 fuentes
-            sources.append({
-                "vaccine": doc.metadata.get('vaccine', 'Desconocida'),
-                "section": doc.metadata.get('section', 'Desconocida'),
-                "content_preview": doc.page_content[:300] + "...",
-                "source_file": doc.metadata.get('source_file', 'Desconocido')
+        try:
+            response = chain.invoke({
+                "context": context,
+                "question": question,
+                "condition_info": condition_info
             })
-        
-        print(f"\n✅ Respuesta generada | Confidence: {confidence} | Fuentes: {len(sources)}")
-        print(f"{'='*60}\n")
-        
-        return {
-            "answer": response.content,
-            "confidence": confidence,
-            "sources": sources,
-            "recommendations": None,
-            "timestamp": datetime.now().isoformat()
-        }
+            
+            answer_text = response.content
+            
+            # Determinar confianza
+            confidence = "high" if len(relevant_docs) >= 5 else "medium" if len(relevant_docs) >= 2 else "low"
+            
+            # Extraer fuentes
+            sources = []
+            for doc in relevant_docs[:10]:
+                sources.append(SourceInfo(
+                    vaccine=doc.metadata.get('vaccine', 'Desconocida'),
+                    section=doc.metadata.get('section', 'Desconocida'),
+                    content_preview=doc.page_content[:200] + "...",
+                    source_file=doc.metadata.get('source_file', 'Desconocido')
+                ))
+            
+            return ChatResponse(
+                answer=answer_text,
+                confidence=confidence,
+                sources=sources,
+                recommendations=None,
+                timestamp=datetime.now().isoformat()
+            )
+            
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Error en generación: {str(e)}")
 
-# ============================================================================
-# INICIALIZACIÓN
-# ============================================================================
-
-app = FastAPI(
-    title="VaccinIA v3.3 - Communication Module API",
-    description="Sistema inteligente de recomendaciones de vacunación con búsqueda especializada por condición",
-    version="3.2.0"
-)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-rag_system = VaccinIARAG()
-
-@app.on_event("startup")
-async def startup_event():
-    """Inicializa el sistema RAG al arrancar"""
-    print("🚀 Iniciando VaccinIA v3.3 - Communication Module...")
-    rag_system.load_knowledge_base()
-    rag_system.load_vectorstore()
-    print(f"✅ VaccinIA v3.3 - Communication Module listo con {len(rag_system.knowledge_base['chunks'])} chunks")
+# Inicializar sistema
+try:
+    rag_system = VaccineRAGSystem()
+    print("✅ Sistema RAG inicializado correctamente")
+except Exception as e:
+    print(f"❌ Error inicializando RAG: {e}")
+    raise
 
 # ============================================================================
 # ENDPOINTS
@@ -643,12 +554,13 @@ async def startup_event():
 
 @app.get("/")
 async def root():
+    """Endpoint raíz con información del servicio"""
     return {
         "service": "VaccinIA v3.3 - Communication Module API",
         "status": "active",
         "features": [
             "Búsqueda especializada por condición médica",
-            "Embarazo, VIH, Cáncer, Trasplantes, Asplenia, Diabetes, EPOC, ERC",
+            "Embarazo, VIH, Cáncer, Trasplantes, Asplenia, Diabetes, EPOC, ERC, Adultos Mayores",
             "Anti-alucinación estricta",
             "Citación obligatoria de fuentes"
         ],
@@ -659,88 +571,18 @@ async def root():
 async def chat(query: VaccinationQuery):
     """
     Endpoint principal para consultas de vacunación
-    Detecta automáticamente condiciones médicas y aplica búsqueda especializada
     """
     try:
-        result = rag_system.answer_question(
-            question=query.question,
-            patient_profile=query.patient_profile,
-            k_docs=8
-        )
-        return ChatResponse(**result)
+        return rag_system.answer_question(query.question, query.patient_profile)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/recommend")
-async def recommend_vaccines(patient: PatientProfile):
-    """
-    Genera recomendaciones completas basadas en perfil del paciente
-    """
-    try:
-        query = f"""Basándote en el siguiente perfil de paciente:
-        Edad: {patient.age} años
-        Sexo: {patient.sex}
-        Embarazo: {'Sí' if patient.pregnant else 'No'}
-        Inmunocomprometido: {'Sí' if patient.immunocompromised else 'No'}
-        Condiciones crónicas: {patient.chronic_conditions or 'Ninguna'}
-        
-        ¿Qué vacunas están recomendadas según las guías del PAI Colombia?
-        Incluye esquemas, dosis, intervalos y contraindicaciones si aplican.
-        """
-        
-        result = rag_system.answer_question(
-            question=query,
-            patient_profile=patient,
-            k_docs=15
-        )
-        
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/vaccines")
-async def list_vaccines():
-    """Lista todas las vacunas disponibles en la base de conocimiento"""
-    vaccines = set()
-    for chunk in rag_system.knowledge_base['chunks']:
-        vaccine_name = chunk['metadata'].get('vaccine')
-        if vaccine_name:
-            vaccines.add(vaccine_name)
-    
-    return {
-        "total": len(vaccines),
-        "vaccines": sorted(list(vaccines))
-    }
-
-@app.get("/conditions")
-async def list_conditions():
-    """Lista todas las condiciones médicas con búsqueda especializada"""
-    conditions_info = []
-    
-    for condition, strategy in CONDITION_SEARCH_STRATEGIES.items():
-        conditions_info.append({
-            "condition": condition,
-            "description": strategy.get('description', ''),
-            "critical_vaccines": strategy.get('critical_vaccines', []),
-            "urgency": strategy.get('urgency', 'NORMAL'),
-            "timing_note": strategy.get('timing_note', None)
-        })
-    
-    return {
-        "total": len(conditions_info),
-        "conditions": conditions_info
-    }
 
 @app.get("/health")
-async def health_check():
-    """Health check endpoint"""
-    return {
-        "status": "healthy",
-        "version": "3.2.0",
-        "vectorstore": "loaded" if rag_system.vectorstore else "not_loaded",
-        "knowledge_base": "loaded" if rag_system.knowledge_base else "not_loaded"
-    }
+async def health():
+    """Health check"""
+    return {"status": "healthy", "timestamp": datetime.now().isoformat()}
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
