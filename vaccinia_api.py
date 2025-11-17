@@ -33,8 +33,23 @@ CONDITION_SEARCH_STRATEGIES = {
             "RSV VRS embarazo 32 semanas nirsevimab protección neonatal"
         ],
         "description": "Gestantes - cualquier trimestre"
+    },    
+    "adulto_mayor": {
+        "critical_vaccines": [
+            "Neumococo PCV13", "Neumococo PPSV23",
+            "Herpes Zóster", "Tdap", 
+            "Influenza", "COVID-19"
+        ],
+        "k_docs": 20,
+        "forced_queries": [
+            "Neumococo conjugada adultos 65 años",
+            "Neumococo polisacárida adultos 65 años", 
+            "Herpes Zóster indicaciones edad 50 años 65",
+            "Herpes Zóster Shingrix 2 dosis"
+        ],
+        "description": "Adultos ≥65 años"
     },
-    
+
     "vih": {
         "critical_vaccines": [
             "Neumococo PCV13", "Neumococo PPSV23",
@@ -220,6 +235,7 @@ CONDITION_SEARCH_STRATEGIES = {
 # Mapeo de keywords a condiciones
 CONDITION_KEYWORDS = {
     "embarazo": ['embaraz', 'gestante', 'gestación', 'prenatal'],
+    "adulto_mayor": ['adulto mayor', 'adulta mayor', 'tercera edad', '65 años', '66 años', '67 años', '68 años', '69 años', '70 años', '71 años', '72 años', '73 años', '74 años', '75 años', '76 años', '77 años', '78 años', '79 años', '80 años'],
     "vih": ['vih', 'sida', 'cd4', 'hiv'],
     "cancer": ['cáncer', 'cancer', 'quimioterapia', 'radioterapia', 'oncológico', 
                'oncologia', 'tumor', 'neoplasia', 'leucemia', 'linfoma'],
