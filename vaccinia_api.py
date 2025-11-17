@@ -42,14 +42,15 @@ CONDITION_SEARCH_STRATEGIES = {
             "Herpes Zóster", "Tdap", 
             "Influenza", "COVID-19"
         ],
-        "k_docs": 15,
+        "k_docs": 20,
         "forced_queries": [
-            "Neumococo PCV13 adulto mayor 65 años",
-            "Neumococo PPSV23 8 semanas después PCV13 adulto mayor",
-            "Herpes Zóster Shingrix 50 años adulto mayor 2 dosis",
-            "Tdap refuerzo cada 10 años adulto",
-            "Influenza anual adulto mayor 65 años",
-            "COVID-19 refuerzo anual adulto mayor"
+            "Neumococo conjugada adultos 65 años",
+            "Neumococo polisacárida adultos 65 años",
+            "Herpes Zóster indicaciones edad 50 años 65",
+            "Herpes Zóster Shingrix 2 dosis",
+            "Tdap refuerzo adultos",
+            "Influenza anual adultos",
+            "COVID-19 adultos mayores"
         ],
         "description": "Adultos ≥65 años"
     },
