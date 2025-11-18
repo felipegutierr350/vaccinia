@@ -293,7 +293,7 @@ class ChatResponse(BaseModel):
 class VaccinIARAG:
     def __init__(self):
         self.embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
-        self.llm = ChatOpenAI(model="gpt-4-turbo-preview", temperature=0)
+        self.llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
         self.vectorstore = None
         self.knowledge_base = None
         
