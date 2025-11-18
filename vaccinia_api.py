@@ -707,7 +707,7 @@ async def recommend_vaccines(patient: PatientProfile):
         result = rag_system.answer_question(
             question=query,
             patient_profile=patient,
-            k_docs=15
+            k_docs=8
         )
         
         return result
