@@ -11690,10 +11690,164 @@
         "communication_type": "Mejores prácticas",
         "source": "VaccinIA_Communication_Guide"
       }
+    },
+    {
+      "content": "VACUNA COVID-19 - RECOMENDACIONES ADULTOS MAYORES 2024-2025\n\nPOBLACIÓN OBJETIVO:\n- TODOS los adultos ≥65 años\n- Adultos ≥60 años con condiciones de alto riesgo (enfermedad cardiovascular, EPOC, diabetes, inmunodepresión)\n- Refuerzo anual recomendado\n\nVACUNAS DISPONIBLES 2024-2025:\n- Pfizer-BioNTech (Comirnaty) actualizada XBB.1.5\n- Moderna (Spikevax) actualizada XBB.1.5\n- Novavax actualizada XBB.1.5\n\nESQUEMA PARA ADULTOS MAYORES:\n- 1 dosis de refuerzo anual\n- Aplicar en otoño/invierno (septiembre-diciembre) para máxima protección\n- Puede aplicarse simultáneamente con influenza",
+      "metadata": {
+        "vaccine": "COVID-19",
+        "section": "Adultos Mayores 2024-2025",
+        "type": "recomendaciones_actualizadas",
+        "source_file": "covid19_adultos_mayores_2024.txt",
+        "chunk_index": 0,
+        "total_chunks_in_doc": 3
+      }
+    },
+    {
+      "content": "GRUPOS DE ALTO RIESGO (prioridad máxima):\n1. Enfermedad cardiovascular (infarto, insuficiencia cardíaca, arritmias)\n2. EPOC y enfermedad pulmonar crónica\n3. Diabetes mellitus\n4. Enfermedad renal crónica\n5. Obesidad (IMC ≥30)\n6. Inmunodepresión\n7. Cáncer activo\n\nIMPORTANCIA EN CARDIÓPACOS:\n- COVID-19 aumenta riesgo de eventos cardiovasculares agudos (infarto, ACV, arritmias)\n- Mortalidad 3-5x mayor en pacientes con enfermedad cardiovascular\n- Vacunación reduce hospitalización en 60-80%\n- Reduce mortalidad cardiovascular relacionada con COVID",
+      "metadata": {
+        "vaccine": "COVID-19",
+        "section": "Adultos Mayores 2024-2025",
+        "type": "recomendaciones_actualizadas",
+        "source_file": "covid19_adultos_mayores_2024.txt",
+        "chunk_index": 1,
+        "total_chunks_in_doc": 3
+      }
+    },
+    {
+      "content": "TIMING:\n- Esperar 3 meses desde última dosis o infección\n- Si tuvo COVID recientemente, puede esperar hasta 3 meses para refuerzo\n\nFUENTES:\n- CDC ACIP Recomendaciones 2024-2025\n- OMS Guías COVID-19 Actualización 2024\n- American Heart Association Statement on COVID-19 Vaccination\n- PAI Colombia Lineamientos COVID-19",
+      "metadata": {
+        "vaccine": "COVID-19",
+        "section": "Adultos Mayores 2024-2025",
+        "type": "recomendaciones_actualizadas",
+        "source_file": "covid19_adultos_mayores_2024.txt",
+        "chunk_index": 2,
+        "total_chunks_in_doc": 3
+      }
+    },
+    {
+      "content": "VACUNA RSV (VIRUS RESPIRATORIO SINCITIAL) - ADULTOS MAYORES\n\nNOVEDAD 2023: Primera vacuna RSV aprobada para adultos ≥60 años\n\nPOBLACIÓN OBJETIVO:\n- Adultos ≥60 años\n- ESPECIALMENTE: \n  * Enfermedad cardiovascular\n  * EPOC y enfermedad pulmonar crónica\n  * Asma severa\n  * Diabetes mellitus\n  * Enfermedad renal crónica\n  * Inmunodepresión\n  * Residentes de hogares de ancianos\n\nVACUNAS DISPONIBLES:\n1. Arexvy (GSK) - Aprobada mayo 2023\n2. Abrysvo (Pfizer) - Aprobada mayo 2023",
+      "metadata": {
+        "vaccine": "RSV",
+        "section": "Adultos Mayores",
+        "type": "nueva_vacuna_2023",
+        "source_file": "rsv_adultos_mayores_2023.txt",
+        "chunk_index": 0,
+        "total_chunks_in_doc": 4
+      }
+    },
+    {
+      "content": "ESQUEMA:\n- 1 dosis única\n- Protección de por vida (lifetime)\n- Puede aplicarse simultáneamente con otras vacunas (influenza, COVID-19)\n\nIMPORTANCIA EN ADULTOS MAYORES:\n- 60,000-160,000 hospitalizaciones anuales por RSV en USA (≥65 años)\n- 6,000-10,000 muertes anuales\n- Alta carga en pacientes con enfermedad cardiovascular y pulmonar\n\nEFECTIVIDAD:\n- Prevención de enfermedad sintomática: ~80%\n- Prevención de hospitalización: 94%\n- Prevención de enfermedad severa: >90%",
+      "metadata": {
+        "vaccine": "RSV",
+        "section": "Adultos Mayores",
+        "type": "nueva_vacuna_2023",
+        "source_file": "rsv_adultos_mayores_2023.txt",
+        "chunk_index": 1,
+        "total_chunks_in_doc": 4
+      }
+    },
+    {
+      "content": "IMPORTANCIA EN CARDIÓPACOS:\n- RSV puede descompensar insuficiencia cardíaca\n- Aumenta riesgo de eventos cardiovasculares agudos\n- Hospitalización prolongada en pacientes con comorbilidades\n\nTIMING:\n- Aplicar antes de temporada RSV (septiembre-octubre)\n- Puede aplicarse en cualquier época del año si no se hizo en temporada\n\nEFECTOS ADVERSOS:\n- Dolor en sitio de inyección (60%)\n- Fatiga (40%)\n- Cefalea (30%)\n- Mialgia (30%)\n- Síntomas leves y transitorios (1-2 días)",
+      "metadata": {
+        "vaccine": "RSV",
+        "section": "Adultos Mayores",
+        "type": "nueva_vacuna_2023",
+        "source_file": "rsv_adultos_mayores_2023.txt",
+        "chunk_index": 2,
+        "total_chunks_in_doc": 4
+      }
+    },
+    {
+      "content": "FUENTES:\n- CDC ACIP Recomendaciones RSV Adultos 2023\n- FDA Aprobación Arexvy y Abrysvo 2023\n- American Lung Association Guidelines\n- Efficacy Trials (AReSVi-006, RENOIR)",
+      "metadata": {
+        "vaccine": "RSV",
+        "section": "Adultos Mayores",
+        "type": "nueva_vacuna_2023",
+        "source_file": "rsv_adultos_mayores_2023.txt",
+        "chunk_index": 3,
+        "total_chunks_in_doc": 4
+      }
+    },
+    {
+      "content": "VACUNA NEUMOCOCO - ESQUEMAS ACTUALIZADOS 2024\n\nVACUNAS DISPONIBLES:\n1. PCV20 (Prevnar 20) - Conjugada 20-valente\n2. PCV15 (Vaxneuvance) - Conjugada 15-valente\n3. PPSV23 (Pneumovax 23) - Polisacárida 23-valente\n\nESQUEMAS RECOMENDADOS PARA ADULTOS ≥65 AÑOS:\n\nOPCIÓN A (PREFERIDA - MÁS SIMPLE):\n- PCV20: 1 dosis única\n- NO necesita PPSV23 posterior\n- Protección completa con 1 sola dosis\n\nOPCIÓN B (ALTERNATIVA):\n- PCV15: 1 dosis ahora\n- PPSV23: 1 dosis 1 año después\n- Requiere 2 dosis en total",
+      "metadata": {
+        "vaccine": "Neumococo",
+        "section": "Esquemas Actualizados 2024",
+        "type": "actualizacion_esquemas",
+        "source_file": "neumococo_esquemas_actualizados_2024.txt",
+        "chunk_index": 0,
+        "total_chunks_in_doc": 4
+      }
+    },
+    {
+      "content": "PACIENTES CON ENFERMEDAD CARDIOVASCULAR:\n- Considerar vacunación desde los 19 años si:\n  * Insuficiencia cardíaca congestiva\n  * Cardiomiopatía\n  * Enfermedad coronaria severa\n  * Uso de inmunosupresores\n\nESQUEMA PARA ADULTOS 19-64 AÑOS CON COMORBILIDADES:\n1. PCV20 (1 dosis) O\n2. PCV15 (ahora) + PPSV23 (8 semanas después, mínimo)\n\nSI YA RECIBIÓ PPSV23 PREVIAMENTE:\n- Esperar 1 año mínimo\n- Luego aplicar PCV20 O PCV15",
+      "metadata": {
+        "vaccine": "Neumococo",
+        "section": "Esquemas Actualizados 2024",
+        "type": "actualizacion_esquemas",
+        "source_file": "neumococo_esquemas_actualizados_2024.txt",
+        "chunk_index": 1,
+        "total_chunks_in_doc": 4
+      }
+    },
+    {
+      "content": "IMPORTANCIA EN CARDIÓPACOS:\n- Neumococo principal causa de neumonía bacteriana\n- Neumonía aumenta riesgo de infarto agudo en 6x\n- Descompensa insuficiencia cardíaca\n- Mortalidad aumentada en pacientes cardiovasculares\n\nEFECTIVIDAD:\n- PCV20: Protección contra 20 serotipos (causa ~50% enfermedad neumocócica invasiva)\n- Reduce hospitalización por neumonía en 45%\n- Reduce bacteremia en 75%\n\nCOMPARACIÓN PCV20 vs PCV15+PPSV23:\n- PCV20: Más conveniente (1 dosis), mejor adherencia\n- PCV15+PPSV23: Mayor cobertura de serotipos adicionales con PPSV23",
+      "metadata": {
+        "vaccine": "Neumococo",
+        "section": "Esquemas Actualizados 2024",
+        "type": "actualizacion_esquemas",
+        "source_file": "neumococo_esquemas_actualizados_2024.txt",
+        "chunk_index": 2,
+        "total_chunks_in_doc": 4
+      }
+    },
+    {
+      "content": "TIMING:\n- Puede aplicarse simultáneamente con otras vacunas\n- Si recibió PPSV23, esperar 1 año para PCV\n- Si recibió PCV13, puede recibir PCV20 (sin necesidad de PPSV23)\n\nFUENTES:\n- CDC ACIP Actualizaciones Neumococo 2024\n- Updated Recommendations for Use of PCV20 and PCV15 (MMWR 2024)\n- American Heart Association Statement on Pneumococcal Vaccination\n- PAI Colombia Esquemas Neumococo",
+      "metadata": {
+        "vaccine": "Neumococo",
+        "section": "Esquemas Actualizados 2024",
+        "type": "actualizacion_esquemas",
+        "source_file": "neumococo_esquemas_actualizados_2024.txt",
+        "chunk_index": 3,
+        "total_chunks_in_doc": 4
+      }
+    },
+    {
+      "content": "VACUNA TDAP/Td - ADULTOS MAYORES\n\nCOMPONENTES:\n- Tdap: Tétanos, Difteria, Tosferina acelular\n- Td: Tétanos, Difteria (sin tosferina)\n\nESQUEMA ADULTOS MAYORES:\n1. Si nunca recibió Tdap de adulto: Aplicar Tdap 1 vez\n2. Luego: Refuerzo Td cada 10 años\n3. Si no recuerda última dosis: Aplicar Tdap ahora\n\nIMPORTANCIA EN ADULTOS MAYORES:\n- Tétanos: Tasa de mortalidad 20-30% en adultos mayores\n- Tosferina: Brotes recientes, transmisión a nietos\n- Inmunidad disminuye con edad\n- Heridas son comunes en adultos mayores (caídas, jardinería)",
+      "metadata": {
+        "vaccine": "Tdap",
+        "section": "Adultos Mayores",
+        "type": "recomendaciones_generales",
+        "source_file": "tdap_adultos_mayores.txt",
+        "chunk_index": 0,
+        "total_chunks_in_doc": 3
+      }
+    },
+    {
+      "content": "INDICACIONES ESPECIALES:\n- Contacto cercano con lactantes <12 meses: Tdap obligatoria\n- Herida contaminada y última dosis >5 años: Refuerzo\n- Herida limpia y última dosis >10 años: Refuerzo\n\nTIMING:\n- Puede aplicarse simultáneamente con otras vacunas\n- Sin interferencia con neumococo, influenza, COVID-19\n\nEFECTOS ADVERSOS:\n- Dolor en sitio de inyección (60-80%)\n- Enrojecimiento local (20-30%)\n- Cefalea, fatiga (10-20%)\n- Síntomas leves y transitorios",
+      "metadata": {
+        "vaccine": "Tdap",
+        "section": "Adultos Mayores",
+        "type": "recomendaciones_generales",
+        "source_file": "tdap_adultos_mayores.txt",
+        "chunk_index": 1,
+        "total_chunks_in_doc": 3
+      }
+    },
+    {
+      "content": "CONSIDERACIONES EN CARDIÓPACOS:\n- Infecciones bacterianas pueden descompensar insuficiencia cardíaca\n- Tétanos causa hipertensión severa y arritmias\n- Vacunación es segura en pacientes cardiovasculares\n\nFUENTES:\n- CDC ACIP Recomendaciones Tdap/Td\n- Advisory Committee on Immunization Practices\n- PAI Colombia Lineamientos Td/Tdap",
+      "metadata": {
+        "vaccine": "Tdap",
+        "section": "Adultos Mayores",
+        "type": "recomendaciones_generales",
+        "source_file": "tdap_adultos_mayores.txt",
+        "chunk_index": 2,
+        "total_chunks_in_doc": 3
+      }
     }
   ],
   "metadata": {
-    "total_chunks": 1171,
+    "total_chunks": 1185,
     "total_vaccines": 21,
     "processing_date": "2025-11-07T22:04:07.718306",
     "sources": [
@@ -11708,6 +11862,18 @@
     "pregnancy_vaccines_completed": true,
     "pregnancy_completion_date": "2025-11-16T10:22:38.601961",
     "communication_strategies_added": true,
-    "communication_completion_date": "2025-11-16T11:06:49.049603"
+    "communication_completion_date": "2025-11-16T11:06:49.049603",
+    "critical_vaccines_update": {
+      "date": "2025-11-20T10:52:46.335597",
+      "added_vaccines": [
+        "COVID-19 2024-2025",
+        "RSV Adultos",
+        "Neumococo PCV20",
+        "Tdap Adultos"
+      ],
+      "chunks_added": 14,
+      "previous_total": 1171,
+      "new_total": 1185
+    }
   }
 }
