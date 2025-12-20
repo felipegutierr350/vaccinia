@@ -16,6 +16,8 @@ from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
+# Módulo Influenza
+from influenza_chat import router as influenza_router
 from langchain_core.documents import Document
 
 # ============================================================================
@@ -647,6 +649,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Incluir módulo Influenza
+app.include_router(influenza_router)
 
 rag_system = VaccinIARAG()
 
